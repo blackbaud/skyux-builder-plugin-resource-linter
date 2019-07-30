@@ -146,17 +146,17 @@ function findMissingKeysInResourceFiles(resourceFiles, references) {
             const fileName = referenceFile.fileName;
             referenceFile.resources.map(key => {
                 const isMissing = !resourceFile.keys.includes(key);
-                const isRawKey = key.match(/[^a-zA-Z0-9_]/g);
+                const isNonStandardKey = key.match(/[^a-zA-Z0-9_]/g);
                 if (isMissing) {
                     const result = {
                         resourceFileName: resourceFile.resourceFileName,
                         fileName,
                         key
                     };
-                    if (isRawKey) {
-                        missingKeys.missing.push(result);
-                    } else {
+                    if (isNonStandardKey) {
                         missingKeys.nonStandard.push(result);
+                    } else {
+                        missingKeys.missing.push(result);
                     }
                 }
             });
