@@ -1,0 +1,24 @@
+{
+  "name": "@skyux-sdk/builder-resource-linter",
+  "version": "1.0.0",
+  "description": "CLI extension for skyux builder to manage resource files.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blackbaud/skyux-builder-plugin-resource-linter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/blackbaud/skyux-builder-plugin-resource-linter/issues"
+  },
+  "homepage": "https://github.com/blackbaud/skyux-builder-plugin-resource-linter#readme",
+  "dependencies": {
+    "fs-extra": "8.1.0",
+    "glob": "7.1.4",
+    "path": "0.12.7"
+  }
+}
