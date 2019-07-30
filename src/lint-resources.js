@@ -1,21 +1,27 @@
+'use strict';
+
 const glob = require('glob');
 const fs = require('fs-extra');
-const _flatten = require('lodash.flatten');
 const matchAll = require('string.prototype.matchall');
 const htmlResourcesRegex = /([^="\s{]+)\s+\|\s+skyAppResources/gm;
 const tsResourcesServiceLookupRegex = /\S*(?=:\s?SkyAppResourcesService)/gms;
 
 function lintResources(argv, config) {
+    // Get all file paths
     const htmlFilePaths = glob.sync('./src/app/**/*component.html');
     const tsFilePaths = glob.sync('./src/app/**/!(*.spec).ts')
     const resourceFilePaths = glob.sync('./src/assets/locales/*.json');
+    // Get resource keys, files, and file resource references
     const keys = getResourceStringKeys(resourceFilePaths);
     const htmlFiles = getFiles(htmlFilePaths);
     const tsFiles = getFiles(tsFilePaths);
-    const unusedKeys = findUnusedKeysInResourceFiles(keys, htmlFiles.concat(tsFiles));
     const htmlRefs = getHtmlReferences(htmlFiles);
     const tsRefs = getTSReferences(tsFiles);
+    // Get results
+    const unusedKeys = findUnusedKeysInResourceFiles(keys, htmlFiles.concat(tsFiles));
     const missingKeys = findMissingKeysInResourceFiles(keys, htmlRefs.concat(tsRefs));
+    console.log('missing')
+    // Log results
     console.log('Missing Keys:');
     console.table(missingKeys.missing);
     console.log('Non Standard Keys:');
@@ -127,6 +133,7 @@ function getTSResourcesStringLookupRegex(serviceName) {
 function findUnusedKeysInResourceFiles(resourceFiles, files) {
     const results = resourceFiles.reduce((unusedKeys, file) => {
         file.keys.map(key => {
+            // console.log(files);
             const found = files.some(f => f.fileContents.includes(key));
             if (!found) {
                 unusedKeys.push({
@@ -146,7 +153,7 @@ function findMissingKeysInResourceFiles(resourceFiles, references) {
             const fileName = referenceFile.fileName;
             referenceFile.resources.map(key => {
                 const isMissing = !resourceFile.keys.includes(key);
-                const isNonStandardKey = key.match(/[^a-zA-Z0-9_]/g);
+                const isNonStandardKey = key.match(/[^a-z0-9_]/g);
                 if (isMissing) {
                     const result = {
                         resourceFileName: resourceFile.resourceFileName,

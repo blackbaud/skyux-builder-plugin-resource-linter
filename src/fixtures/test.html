@@ -1,0 +1,22 @@
+<div [SomeThing]="'key_with_prop_binding' | skyAppResources">
+</div>
+
+<span [blah]=" 'prop_binding_with_spaces' | skyAppResources "></span>
+
+<p>
+    {{ 'key_in_paragraph' | skyAppResources }}
+</p>
+<p>
+    Lorem ipsum dolor sit amet consectetur<span>{{ 'key_in_line' | skyAppResources</span> adipisicing elit. Architecto modi impedit quae, sed fugit dicta! Eveniet nihil minima, explicabo ipsum architecto, modi eius nulla quae molestiae, vitae repudiandae maxime totam?
+</p>
+
+<p>{{'key_no_spaces'|skyAppResources}}</p>
+
+<p>{{ 'key_with_newlines 
+    | skyAppResources }}
+</p>
+
+<p>{{ 'missing_key' | skyAppResources }}</p>
+
+<span> {{ methodKey() | skyAppResources }} </span>
+<span> {{ propertyKey | skyAppResources }} </span>
