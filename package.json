@@ -19,6 +19,7 @@
   "dependencies": {
     "fs-extra": "8.1.0",
     "glob": "7.1.4",
+    "lodash.isempty": "4.4.0",
     "path": "0.12.7",
     "string.prototype.matchall": "3.0.1"
   },

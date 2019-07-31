@@ -11,6 +11,16 @@ describe('Index', () => {
         return './src/fixtures/mock-config.json';
       }
     });
+    mock('fs-extra', {
+      readJsonSync: () => { return { test: 'test' }; },
+      existsSync: (path) => { 
+        if (path === './src/fixtures/mock-config-nope.json') {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    })
   });
 
   beforeEach(() => {

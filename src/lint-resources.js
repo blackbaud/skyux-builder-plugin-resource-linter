@@ -3,6 +3,7 @@
 const glob = require('glob');
 const fs = require('fs-extra');
 const matchAll = require('string.prototype.matchall');
+const _isEmpty = require('lodash.isempty');
 const htmlResourcesRegex = /([^="\s{]+)\s+\|\s+skyAppResources/gm;
 const tsResourcesServiceLookupRegex = /\S*(?=:\s?SkyAppResourcesService)/gms;
 
@@ -20,7 +21,6 @@ function lintResources(argv, config) {
     // Get results
     const unusedKeys = findUnusedKeysInResourceFiles(keys, htmlFiles.concat(tsFiles));
     const missingKeys = findMissingKeysInResourceFiles(keys, htmlRefs.concat(tsRefs));
-    console.log('missing')
     // Log results
     console.log('Missing Keys:');
     console.table(missingKeys.missing);
@@ -31,10 +31,10 @@ function lintResources(argv, config) {
 }
 
 function getResourceStringKeys(filePaths) {
-    if (!filePaths) {
+    if (_isEmpty(filePaths)) {
         return [];
     }
-    const keys = filePaths.reduce((keys, filePath) => {
+    const resourceStringKeys = filePaths.reduce((keys, filePath) => {
         try {
             const parsedResourceFile = fs.readJsonSync(filePath);
             const keyRef = {
@@ -49,39 +49,41 @@ function getResourceStringKeys(filePaths) {
             return keys;
         }
     }, []);
-    return keys;
+    return resourceStringKeys;
 }
 
 function getFiles(filePaths) {
-    if (!filePaths) {
+    if (_isEmpty(filePaths)) {
         return [];
     }
-    const files = filePaths.reduce((fileContents, filePath) => {
+    const results = filePaths.reduce((files, filePath) => {
         const file = {
-            fileName: filePath.split('/').pop()
+            fileName: filePath.split('/').pop(),
+            fileContents: ''
         };
         try {
             const fileString = fs.readFileSync(filePath, "utf8");
             file.fileContents = fileString;
         } catch (error) {
-            console.error(`Problem fetching file at path ${filePath}`);
+            console.error(`Problem fetching file at path ${filePath}`, error);
         }
-        fileContents.push(file);
-        return fileContents;
+        files.push(file);
+        return files;
     }, []);
-    return files;
+    return results;
 }
 
 function getHtmlReferences(files) {
-    if (!files) {
+    if (_isEmpty(files)) {
         return [];
     }
     const references = files.reduce((refs, file) => {
         const htmlFileReferences = {
-            fileName: file.fileName
+            fileName: file.fileName,
+            resources: []
         };
         try {
-            const resources = [...matchAll(file.fileContents,htmlResourcesRegex)].map(r => r.pop().replace(/'|\s|\\/gi, ''));
+            const resources = [...matchAll(file.fileContents, htmlResourcesRegex)].map(r => r.pop().replace(/'|\s|\\/gi, ''));
             htmlFileReferences.resources = resources;
             refs.push(htmlFileReferences);
             return refs;
@@ -95,12 +97,13 @@ function getHtmlReferences(files) {
 }
 
 function getTSReferences(files) {
-    if (!files) {
+    if (_isEmpty(files)) {
         return [];
     }
     const references = files.reduce((refs, file) => {
         const tsFileReferences = {
-            fileName: file.fileName
+            fileName: file.fileName,
+            resources: []
         };
         try {
             const serviceName = file.fileContents.match(tsResourcesServiceLookupRegex);
@@ -131,9 +134,11 @@ function getTSResourcesStringLookupRegex(serviceName) {
 }
 
 function findUnusedKeysInResourceFiles(resourceFiles, files) {
+    if (_isEmpty(resourceFiles) | _isEmpty(files)) {
+        return [];
+    }
     const results = resourceFiles.reduce((unusedKeys, file) => {
         file.keys.map(key => {
-            // console.log(files);
             const found = files.some(f => f.fileContents.includes(key));
             if (!found) {
                 unusedKeys.push({
@@ -148,6 +153,12 @@ function findUnusedKeysInResourceFiles(resourceFiles, files) {
 }
 
 function findMissingKeysInResourceFiles(resourceFiles, references) {
+    if (_isEmpty(resourceFiles) | _isEmpty(references)) {
+        return {
+            missing: [],
+            nonStandard: []
+        }
+    }
     const results = resourceFiles.reduce((missingKeys, resourceFile) => {
         references.map(referenceFile => {
             const fileName = referenceFile.fileName;

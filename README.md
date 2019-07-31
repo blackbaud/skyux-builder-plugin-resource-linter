@@ -6,3 +6,8 @@ This command lints the resource files in a SKYUX spa. It determines if there are
 ```
 npm install --save-dev @skyux-sdk/builder-resource-linter
 ```
+
+## Use
+```
+skyux lint-resources
+```
