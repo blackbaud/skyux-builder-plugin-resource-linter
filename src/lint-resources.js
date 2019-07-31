@@ -10,7 +10,7 @@ const tsResourcesServiceLookupRegex = /\S*(?=:\s?SkyAppResourcesService)/gms;
 function lintResources(argv, config) {
     // Get all file paths
     const htmlFilePaths = glob.sync('./src/app/**/*component.html');
-    const tsFilePaths = glob.sync('./src/app/**/!(*.spec).ts')
+    const tsFilePaths = glob.sync('./src/app/**/!(*.spec|*.mock).ts')
     const resourceFilePaths = glob.sync('./src/assets/locales/*.json');
     // Get resource keys, files, and file resource references
     const keys = getResourceStringKeys(resourceFilePaths);
