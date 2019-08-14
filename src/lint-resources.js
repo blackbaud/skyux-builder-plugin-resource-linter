@@ -144,7 +144,7 @@ function findUnusedKeysInResourceFiles(resourceFiles, files) {
             if (!found) {
                 unusedKeys.push({
                     resourceFileName: file.resourceFileName,
-                    key
+                    key: sanitizedKey
                 });
             }
         });
@@ -168,12 +168,11 @@ function findMissingKeysInResourceFiles(resourceFiles, references) {
                 const isMissing = !resourceFile.keys.includes(sanitizedKey);
                 // Need to verify that the key is actually a string and not a variable ref of some kind.
                 const isNonStandardKey = !(!!key.match(/'|\s|\\/gi)) || !!sanitizedKey.match(/[^a-z0-9_]/g);
-                console.log(key, sanitizedKey, isNonStandardKey);
                 if (isMissing) {
                     const result = {
                         resourceFileName: resourceFile.resourceFileName,
                         fileName,
-                        sanitizedKey
+                        key: sanitizedKey
                     };
                     if (isNonStandardKey) {
                         missingKeys.nonStandard.push(result);
