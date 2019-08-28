@@ -14,13 +14,10 @@ describe('Lint Resources', () => {
                 switch (path) {
                     case './src/app/**/*component.html':
                         return ['./src/app/test/test.component.html'];
-                        break;
-                    case './src/app/**/!(*.spec).ts':
+                    case './src/app/**/!(*.spec|*.mock).ts':
                         return ['./src/app/test/test.ts'];
-                        break;
                     case './src/assets/locales/*.json':
                         return ['./assets/locales/test.json'];
-                        break;
                     default:
                         break;
                 }

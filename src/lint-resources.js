@@ -83,7 +83,7 @@ function getHtmlReferences(files) {
             resources: []
         };
         try {
-            const resources = [...matchAll(file.fileContents, htmlResourcesRegex)].map(r => r.pop().replace(/'|\s|\\/gi, ''));
+            const resources = [...matchAll(file.fileContents, htmlResourcesRegex)].map(r => r.pop());
             htmlFileReferences.resources = resources;
             refs.push(htmlFileReferences);
             return refs;
@@ -113,7 +113,7 @@ function getTSReferences(files) {
                     if (r.includes(',')) {
                         r = r.split(',').shift();
                     }
-                    return r.replace(/'|\s|\\/gi, '');
+                    return r;
                 });
                 tsFileReferences.resources = resources;
                 refs.push(tsFileReferences);
@@ -139,11 +139,12 @@ function findUnusedKeysInResourceFiles(resourceFiles, files) {
     }
     const results = resourceFiles.reduce((unusedKeys, file) => {
         file.keys.map(key => {
-            const found = files.some(f => f.fileContents.includes(key));
+            const sanitizedKey = sanitizeKey(key);
+            const found = files.some(f => f.fileContents.includes(sanitizedKey));
             if (!found) {
                 unusedKeys.push({
                     resourceFileName: file.resourceFileName,
-                    key
+                    key: sanitizedKey
                 });
             }
         });
@@ -163,13 +164,15 @@ function findMissingKeysInResourceFiles(resourceFiles, references) {
         references.map(referenceFile => {
             const fileName = referenceFile.fileName;
             referenceFile.resources.map(key => {
-                const isMissing = !resourceFile.keys.includes(key);
-                const isNonStandardKey = key.match(/[^a-z0-9_]/g);
+                const sanitizedKey = sanitizeKey(key);
+                const isMissing = !resourceFile.keys.includes(sanitizedKey);
+                // Need to verify that the key is actually a string and not a variable ref of some kind.
+                const isNonStandardKey = !(!!key.match(/'|\s|\\/gi)) || !!sanitizedKey.match(/[^a-z0-9_]/g);
                 if (isMissing) {
                     const result = {
                         resourceFileName: resourceFile.resourceFileName,
                         fileName,
-                        key
+                        key: sanitizedKey
                     };
                     if (isNonStandardKey) {
                         missingKeys.nonStandard.push(result);
@@ -185,6 +188,10 @@ function findMissingKeysInResourceFiles(resourceFiles, references) {
         nonStandard: []
     });
     return results;
+}
+
+function sanitizeKey(key) {
+    return key.replace(/'|\s|\\/gi, '');
 }
 
 module.exports = lintResources;

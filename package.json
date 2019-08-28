@@ -1,6 +1,6 @@
 {
-  "name": "@skyux-sdk/builder-resource-linter",
-  "version": "1.0.0",
+  "name": "@blackbaud/skyux-builder-resource-linter",
+  "version": "1.0.0-rc.0",
   "description": "CLI extension for skyux builder to manage resource files.",
   "main": "index.js",
   "scripts": {
