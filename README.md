@@ -4,7 +4,7 @@ This command lints the resource files in a SKYUX spa. It determines if there are
 
 ## Installation
 ```
-npm install --save-dev @skyux-sdk/builder-resource-linter
+npm install --save-dev @blackbaud/skyux-builder-resource-linter
 ```
 
 ## Use
