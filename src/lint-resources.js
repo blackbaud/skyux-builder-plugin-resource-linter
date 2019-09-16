@@ -4,8 +4,8 @@ const glob = require('glob');
 const fs = require('fs-extra');
 const matchAll = require('string.prototype.matchall');
 const _isEmpty = require('lodash.isempty');
-const htmlResourcesRegex = /([^="\s{]+)\s+\|\s+skyAppResources/gm;
-const tsResourcesServiceLookupRegex = /\S*(?=:\s?SkyAppResourcesService)/gms;
+const htmlResourcesRegex = /([^="\s{]+)\s+\|\s+sky(?:App|Lib)Resources /gm;
+const tsResourcesServiceLookupRegex = /\S*(?=:\s?Sky(?:App|Lib)ResourcesService)/gms;
 
 function lintResources(argv, config) {
     // Get all file paths

@@ -7,5 +7,7 @@
     "key_in_paragraph": {},
     "key_in_line": {},
     "key_no_spaces": {},
-    "key_with_newlines": {}
+    "key_with_newlines": {},
+    "lib_key": {},
+    "lib_key_ts": {}
 }
