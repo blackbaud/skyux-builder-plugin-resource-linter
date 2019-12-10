@@ -9,5 +9,6 @@
     "key_no_spaces": {},
     "key_with_newlines": {},
     "lib_key": {},
-    "lib_key_ts": {}
+    "lib_key_ts": {},
+    "lib_key_ts_with_param": {}
 }

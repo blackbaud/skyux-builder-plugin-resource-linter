@@ -43,8 +43,7 @@ function getResourceStringKeys(filePaths) {
             };
             keys.push(keyRef);
             return keys;
-        } catch (error)
-        {
+        } catch (error) {
             console.error(`Unable to fetch resource file ${filePath}`, error);
             return keys;
         }
@@ -109,14 +108,17 @@ function getTSReferences(files) {
             const serviceName = file.fileContents.match(tsResourcesServiceLookupRegex);
             if (serviceName) {
                 const tsResourceStringLookupRegex = getTSResourcesStringLookupRegex(serviceName.shift());
-                const resources = file.fileContents.match(tsResourceStringLookupRegex).map(r => {
-                    if (r.includes(',')) {
-                        r = r.split(',').shift();
-                    }
-                    return r;
-                });
-                tsFileReferences.resources = resources;
-                refs.push(tsFileReferences);
+                const resources = file.fileContents.match(tsResourceStringLookupRegex);
+                if (resources) {
+                    resources.map(r => {
+                        if (r.includes(',')) {
+                            r = r.split(',').shift();
+                        }
+                        return r;
+                    });
+                    tsFileReferences.resources = resources;
+                    refs.push(tsFileReferences);
+                }
             }
             return refs;
 
@@ -164,10 +166,18 @@ function findMissingKeysInResourceFiles(resourceFiles, references) {
         references.map(referenceFile => {
             const fileName = referenceFile.fileName;
             referenceFile.resources.map(key => {
-                const sanitizedKey = sanitizeKey(key);
-                const isMissing = !resourceFile.keys.includes(sanitizedKey);
+                let sanitizedKey = sanitizeKey(key);
+                let isMissing = !resourceFile.keys.includes(sanitizedKey);
                 // Need to verify that the key is actually a string and not a variable ref of some kind.
-                const isNonStandardKey = !(!!key.match(/'|\s|\\/gi)) || !!sanitizedKey.match(/[^a-z0-9_]/g);
+                let isNonStandardKey = !(!!key.match(/'|\s|\\/gi)) || !!sanitizedKey.match(/[^a-z0-9_]/g);
+                if (isMissing && isNonStandardKey) {
+                    // If the key is missing and is non-standard, check if it's part of request params
+                    const paramKey = key.match(`'(.*?)'`);
+                    if (paramKey && paramKey.length > 1 && paramKey[1]) {
+                        sanitizedKey = paramKey[1];
+                        isMissing = !resourceFile.keys.includes(sanitizedKey);
+                    }
+                }
                 if (isMissing) {
                     const result = {
                         resourceFileName: resourceFile.resourceFileName,

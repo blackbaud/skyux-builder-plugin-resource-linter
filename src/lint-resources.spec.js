@@ -42,19 +42,19 @@ describe('Lint Resources', () => {
         spyOn(console, 'table');
         lintResources([], undefined);
         expect(console.table).toHaveBeenCalledTimes(3);
-        expect(console.table).toHaveBeenCalledWith([ { resourceFileName: 'test.json', key: 'unused_key' } ]);
-        expect(console.table).toHaveBeenCalledWith([ { resourceFileName: 'test.json', fileName: 'test.component.html', key: 'missing_key' } ])
-        expect(console.table).toHaveBeenCalledWith([ 
-            { 
+        expect(console.table).toHaveBeenCalledWith([{ resourceFileName: 'test.json', key: 'unused_key' }]);
+        expect(console.table).toHaveBeenCalledWith([{ resourceFileName: 'test.json', fileName: 'test.component.html', key: 'missing_key' }])
+        expect(console.table).toHaveBeenCalledWith([
+            {
                 resourceFileName: 'test.json',
                 fileName: 'test.component.html',
-                key: 'methodKey()' 
+                key: 'methodKey()'
             },
-            { 
+            {
                 resourceFileName: 'test.json',
                 fileName: 'test.component.html',
-                key: 'propertyKey' 
-            } 
+                key: 'propertyKey'
+            }
         ]);
     });
 
@@ -90,10 +90,10 @@ describe('Lint Resources', () => {
     });
 
     it('should handle empty parameters', () => {
-        mock('glob', { sync: () => {}});
+        mock('glob', { sync: () => { } });
         mock('fs-extra', {
-            readJsonSync: () => {},
-            readFileSync: () => {}
+            readJsonSync: () => { },
+            readFileSync: () => { }
         });
         lintResources = mock.reRequire('./lint-resources');
         spyOn(console, 'table');
