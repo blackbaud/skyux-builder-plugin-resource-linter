@@ -1,8 +1,15 @@
+import {
+    SkyAppResourcesService,
+    SkyLibResourcesService,
+    NotResourcesService
+} from "./services";
+
+
 class Test {
     constructor(
-        blah: ServiceOne,
-        testService: SkyAppResourcesService,
-        libService: SkyLibResourcesService
+        private otherService: NotResourcesService,
+        private testService: SkyAppResourcesService,
+        private libService: SkyLibResourcesService
     ) { }
 
     public ngOnInit() {
@@ -15,4 +22,6 @@ class Test {
         this.libService.getString('lib_key_ts_with_param', param1);
         this.libService.getString('lib_key_ts_with_param_missing', param1);
     }
+
+    private someObservableCall() { }
 }
