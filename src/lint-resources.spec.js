@@ -62,7 +62,8 @@ describe('Lint Resources', () => {
         expect(results[1]).toEqual([
             { resourceFileName: 'test.json', fileName: 'test.component.html', key: 'methodKey()' },
             { resourceFileName: 'test.json', fileName: 'test.component.html', key: 'propertyKey' },
-            { resourceFileName: 'test.json', fileName: 'test.ts', key: 'nonStandardKey' }
+            { resourceFileName: 'test.json', fileName: 'test.ts', key: 'nonStandardKey' },
+            { resourceFileName: 'test.json', fileName: 'test.ts', key: 'nonStandardKey,param1' }
         ]);
 
         // Unused keys
