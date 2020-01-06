@@ -18,18 +18,18 @@
   "homepage": "https://github.com/blackbaud/skyux-builder-plugin-resource-linter#readme",
   "dependencies": {
     "fs-extra": "8.1.0",
-    "glob": "7.1.4",
+    "glob": "7.1.6",
     "lodash.isempty": "4.4.0",
     "node": "^13.3.0",
     "path": "0.12.7",
-    "string.prototype.matchall": "3.0.1"
+    "string.prototype.matchall": "3.0.2"
   },
   "devDependencies": {
-    "jasmine": "3.4.0",
+    "jasmine": "3.5.0",
     "jasmine-spec-reporter": "4.2.1",
     "mkdirp": "0.5.1",
     "mock-require": "3.0.3",
     "nyc": "14.1.1",
-    "rimraf": "2.6.3"
+    "rimraf": "2.7.1"
   }
 }
