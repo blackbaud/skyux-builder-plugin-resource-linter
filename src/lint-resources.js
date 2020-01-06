@@ -105,20 +105,25 @@ function getTSReferences(files) {
             resources: []
         };
         try {
-            const serviceName = file.fileContents.match(tsResourcesServiceLookupRegex);
-            if (serviceName) {
-                const tsResourceStringLookupRegex = getTSResourcesStringLookupRegex(serviceName.shift());
-                const resources = file.fileContents.match(tsResourceStringLookupRegex);
-                if (resources) {
-                    resources.map(r => {
-                        if (r.includes(',')) {
-                            r = r.split(',').shift();
+            const serviceNames = file.fileContents.match(tsResourcesServiceLookupRegex);
+            if (serviceNames) {
+                tsFileReferences.resources = [];
+                serviceNames.forEach(sn => {
+                    if (sn !== '') {
+                        const tsResourceStringLookupRegex = getTSResourcesStringLookupRegex(sn);
+                        const resources = file.fileContents.match(tsResourceStringLookupRegex);
+                        if (resources) {
+                            resources.map(r => {
+                                if (r.includes(',')) {
+                                    r = r.split(',').shift();
+                                }
+                                return r;
+                            });
+                            tsFileReferences.resources.push(...resources);
+                            refs.push(tsFileReferences);
                         }
-                        return r;
-                    });
-                    tsFileReferences.resources = resources;
-                    refs.push(tsFileReferences);
-                }
+                    }
+                })
             }
             return refs;
 
@@ -172,12 +177,14 @@ function findMissingKeysInResourceFiles(resourceFiles, references) {
                 let isNonStandardKey = !(!!key.match(/'|\s|\\/gi)) || !!sanitizedKey.match(/[^a-z0-9_]/g);
                 if (isMissing && isNonStandardKey) {
                     // If the key is missing and is non-standard, check if it's part of request params
-                    const paramKey = key.match(`'(.*?)'`);
-                    if (paramKey && paramKey.length > 1 && paramKey[1]) {
-                        sanitizedKey = paramKey[1];
+                    const paramKey = key.match(/\'(.*?)\'/g);
+                    if (paramKey && paramKey.length > 0 && paramKey[0]) {
+                        isNonStandardKey = false;
+                        sanitizedKey = sanitizeKey(paramKey[0]);
                         isMissing = !resourceFile.keys.includes(sanitizedKey);
                     }
                 }
+
                 if (isMissing) {
                     const result = {
                         resourceFileName: resourceFile.resourceFileName,
@@ -185,9 +192,14 @@ function findMissingKeysInResourceFiles(resourceFiles, references) {
                         key: sanitizedKey
                     };
                     if (isNonStandardKey) {
-                        missingKeys.nonStandard.push(result);
+                        if (!missingKeys.nonStandard.find(r => r.key === result.key)) {
+                            missingKeys.nonStandard.push(result);
+                        }
+
                     } else {
-                        missingKeys.missing.push(result);
+                        if (!missingKeys.missing.find(r => r.key === result.key)) {
+                            missingKeys.missing.push(result);
+                        }
                     }
                 }
             });
