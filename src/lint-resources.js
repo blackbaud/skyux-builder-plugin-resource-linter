@@ -9,24 +9,27 @@ const tsResourcesServiceLookupRegex = /\S*(?=:\s?Sky(?:App|Lib)ResourcesService)
 
 function lintResources(argv, config) {
     // Get all file paths
-    const htmlFilePaths = glob.sync('./src/app/**/*component.html');
+    const htmlFilePaths = glob.sync('./src/app/**/*.html');
     const tsFilePaths = glob.sync('./src/app/**/!(*.spec|*.mock).ts')
     const resourceFilePaths = glob.sync('./src/assets/locales/*.json');
+
     // Get resource keys, files, and file resource references
     const keys = getResourceStringKeys(resourceFilePaths);
     const htmlFiles = getFiles(htmlFilePaths);
     const tsFiles = getFiles(tsFilePaths);
     const htmlRefs = getHtmlReferences(htmlFiles);
     const tsRefs = getTSReferences(tsFiles);
+
     // Get results
     const unusedKeys = findUnusedKeysInResourceFiles(keys, htmlFiles.concat(tsFiles));
     const missingKeys = findMissingKeysInResourceFiles(keys, htmlRefs.concat(tsRefs));
+
     // Log results
-    console.log('Missing Keys:');
+    console.log('Missing Keys');
     console.table(missingKeys.missing);
-    console.log('Non Standard Keys:');
+    console.log('Non-standard Keys');
     console.table(missingKeys.nonStandard);
-    console.log('Unused Keys:');
+    console.log('Potentially Unused Keys');
     console.table(unusedKeys);
 }
 
