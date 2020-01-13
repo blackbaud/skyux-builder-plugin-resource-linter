@@ -12,8 +12,8 @@ describe('Lint Resources', () => {
         mock('glob', {
             sync: (path) => {
                 switch (path) {
-                    case './src/app/**/*component.html':
-                        return ['./src/app/test/test.component.html'];
+                    case './src/app/**/*.html':
+                        return ['./src/app/test/test.html'];
                     case './src/app/**/!(*.spec|*.mock).ts':
                         return ['./src/app/test/test.ts'];
                     case './src/assets/locales/*.json':
@@ -28,7 +28,7 @@ describe('Lint Resources', () => {
                 return testJSON;
             },
             readFileSync: (path) => {
-                if (path === './src/app/test/test.component.html') {
+                if (path === './src/app/test/test.html') {
                     return testHTML;
                 } else {
                     return testTS;
@@ -51,7 +51,7 @@ describe('Lint Resources', () => {
 
         // Missing keys
         expect(results[0]).toEqual([
-            { resourceFileName: 'test.json', fileName: 'test.component.html', key: 'missing_key' },
+            { resourceFileName: 'test.json', fileName: 'test.html', key: 'missing_key' },
             { resourceFileName: 'test.json', fileName: 'test.ts', key: 'test_key_missing' },
             { resourceFileName: 'test.json', fileName: 'test.ts', key: 'test_key_with_params_missing' },
             { resourceFileName: 'test.json', fileName: 'test.ts', key: 'lib_key_missing' },
@@ -60,8 +60,8 @@ describe('Lint Resources', () => {
 
         // Non-standard keys
         expect(results[1]).toEqual([
-            { resourceFileName: 'test.json', fileName: 'test.component.html', key: 'methodKey()' },
-            { resourceFileName: 'test.json', fileName: 'test.component.html', key: 'propertyKey' },
+            { resourceFileName: 'test.json', fileName: 'test.html', key: 'methodKey()' },
+            { resourceFileName: 'test.json', fileName: 'test.html', key: 'propertyKey' },
             { resourceFileName: 'test.json', fileName: 'test.ts', key: 'nonStandardKey' },
             { resourceFileName: 'test.json', fileName: 'test.ts', key: 'nonStandardKey,param1' }
         ]);
@@ -88,7 +88,7 @@ describe('Lint Resources', () => {
                 return testJSON;
             },
             readFileSync: (path) => {
-                if (path === './src/app/test/test.component.html') {
+                if (path === './src/app/test/test.html') {
                     throw err;
                 } else {
                     return testTS;
@@ -98,7 +98,7 @@ describe('Lint Resources', () => {
         lintResources = mock.reRequire('./lint-resources');
         spyOn(console, 'error');
         lintResources([], undefined);
-        expect(console.error).toHaveBeenCalledWith('Problem fetching file at path ./src/app/test/test.component.html', err);
+        expect(console.error).toHaveBeenCalledWith('Problem fetching file at path ./src/app/test/test.html', err);
     });
 
     it('should handle empty parameters', () => {
