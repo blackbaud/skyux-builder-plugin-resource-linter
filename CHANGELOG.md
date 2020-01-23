@@ -1,5 +1,8 @@
-# 1.0.0-rc.3
+# 1.0.0-rc.4
 - Remove inappropriately added dependency on Node
+
+# 1.0.0-rc.3
+- Fix overly prescriptive html file filter that was missing common patterns like index.html
 
 # 1.0.0-rc.2
 - Better null safety when a TS file produces no matches
